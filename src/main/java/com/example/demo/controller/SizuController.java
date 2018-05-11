@@ -3,8 +3,10 @@ package com.example.demo.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,8 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
 import com.example.demo.config.PageUtil;
 import com.example.demo.entity.Foods;
+import com.example.demo.entity.Types;
 import com.example.demo.service.SizuService;
 
 @Controller
@@ -34,8 +40,35 @@ public class SizuController {
 	@Autowired
 	private SolrClient solrClient ;
 	
+	//redis
+	@Autowired
+	private JedisPool jedisPool;
+	
+	/**
+	 * 列表freemarker
+	 */
 	@RequestMapping("/index")
 	public String index(Map<String,Object> root , String currentPage, HttpServletRequest request) throws SolrServerException, IOException{
+		//从连接池中取出jedis对象
+		Jedis jedis = jedisPool.getResource();
+		//通过jedis对象获得types的hash类型
+		Map<String, String> mapr = jedis.hgetAll("types");
+		//获得所有key
+		Set<String> keySet = mapr.keySet();
+		//进行迭代器循环
+		Iterator<String> iterator = keySet.iterator();
+		//定义接收类型集合
+		List<Types> listTypes = new ArrayList<Types>();
+		while (iterator.hasNext()) {
+			Types types = new Types();
+			Object next = iterator.next();
+			System.out.println(mapr.get(next));
+			types.setTid(Integer.parseInt((String) next));
+			types.setTname(mapr.get(next));
+			listTypes.add(types);
+		}
+		jedis.close();
+		
 		Integer count = sizuService.seleFoodCount();
 		//工具类调用 当前页  每页记录条数  总条数
 		PageUtil page = new PageUtil(currentPage, 5, count);
@@ -48,19 +81,52 @@ public class SizuController {
 		map.put("PageSize", page.getPageSize());
 	
 		List<Foods> list = sizuService.getFoodList(map);
-		//生命绝对路径传送前台引用
+		//声明绝对路径传送前台引用
 		String path1 = request.getContextPath();
 		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path1+"/";
 		//生成静态页打包数据
 		root.put("list", list);
+		root.put("listTypes", listTypes);
 		root.put("page", page);
 		root.put("basePath", basePath);
 		return "index" ;
 	}
-	
+	/**
+	 * 
+	 * @param foods
+	 * @param currentPage
+	 * @param root
+	 * @param request
+	 * @return String
+	 * @throws SolrServerException
+	 * @throws IOException
+	 * 
+	 * solr高亮查询
+	 */
 	@RequestMapping("/food")
 	public String food(Foods foods, String currentPage , Map<String,Object> root ,HttpServletRequest request) throws SolrServerException, IOException{
 		System.out.println("solr----------"+foods.getFoodName());
+		//从连接池中取出jedis对象
+		Jedis jedis = jedisPool.getResource();
+		//通过jedis对象获得types的hash类型
+		Map<String, String> mapr = jedis.hgetAll("types");
+		//获得所有key
+		Set<String> keySet = mapr.keySet();
+		//进行迭代器循环
+		Iterator<String> iterator = keySet.iterator();
+		//定义接收类型集合
+		List<Types> listTypes = new ArrayList<Types>();
+		while (iterator.hasNext()) {
+			Types types = new Types();
+			Object next = iterator.next();
+			System.out.println(mapr.get(next));
+			types.setTid(Integer.parseInt((String) next));
+			types.setTname(mapr.get(next));
+			listTypes.add(types);
+		}
+		jedis.close();
+		
+		// solr
 		String q = "" ;
 		//判断美食是否为空
 		if (foods.getFoodName()!=null && !foods.getFoodName().equals("")) {
@@ -116,6 +182,7 @@ public class SizuController {
 		PageUtil page = new PageUtil(currentPage, 5, count);
 		//把前台需要展示的数据放到map中发送到前台
 		root.put("list", list);
+		root.put("listTypes", listTypes);
 		root.put("page", page);
 		root.put("foodName", foods.getFoodName());
 		root.put("basePath", basePath);

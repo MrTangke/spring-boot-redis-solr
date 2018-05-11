@@ -19,7 +19,13 @@
 			  			<form action="${basePath}food" method="post" >
 							<input type="hidden" name="currentPage" id="cur"/>
 							美食搜索：<input type="text" name="foodName" value="${foodName!""}" />
-							<input type="submit" value="solr查询" class="btn btn-primary btn-xs" />
+							<input type="submit" value="solr查询" class="btn btn-primary btn-xs" /><br/>
+							<select class="form-control input-sm" style=" width: 178px;margin-left: 10px;margin-top: 10px;">
+							  <option>  ---------- R e d i s ----------  </option>
+							  <#list listTypes as types>
+		    						<option value="${types.tid}">${types.tname}</option>
+		    				  </#list>
+							</select> 
 						</form>
 					</center>
 		  		</div>

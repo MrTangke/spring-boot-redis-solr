@@ -92,10 +92,10 @@ public class PageUtil {
 	
 	private void initPage(){
 		this.page = "第"+this.currentPage+"/"+this.lastPage+"页";
-		this.page += "<input type='button' value='首页' onclick='fenye(1)' >";
-		this.page += "<input type='button' value='上一页' onclick='fenye("+this.prevPage+")' >";
-		this.page += "<input type='button' value='下一页' onclick='fenye("+this.nextPage+")' >";
-		this.page += "<input type='button' value='尾页' onclick='fenye("+this.lastPage+")' >";
+		this.page += "<input type='button' class='btn btn-primary btn-xs' value='首页' onclick='fenye(1)' >";
+		this.page += "<input type='button' class='btn btn-primary btn-xs' value='上一页' onclick='fenye("+this.prevPage+")' >";
+		this.page += "<input type='button' class='btn btn-primary btn-xs' value='下一页' onclick='fenye("+this.nextPage+")' >";
+		this.page += "<input type='button' class='btn btn-primary btn-xs' value='尾页' onclick='fenye("+this.lastPage+")' >";
 	}
 	
 

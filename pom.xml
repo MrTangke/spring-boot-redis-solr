@@ -23,24 +23,28 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>  
 	</properties>
   
-	  	<parent>
-	    	<groupId>org.springframework.boot</groupId>
-	    	<artifactId>spring-boot-starter-parent</artifactId>
-	    	<version>1.5.1.RELEASE</version>
-	  	</parent>
+  	<!-- spring boot 核心父依赖 -->
+  	<parent>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-parent</artifactId>
+    	<version>1.5.1.RELEASE</version>
+  	</parent>
   
   	<dependencies>
+  		<!-- spring boot 核心的web组件 -->
   		<dependency>
 			<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-web</artifactId>
   		</dependency>
   	
+  		<!-- 集成mybatis -->
   		<dependency>
 		    <groupId>org.mybatis.spring.boot</groupId>
 		    <artifactId>mybatis-spring-boot-starter</artifactId>
 		    <version>1.0.0</version>
 		</dependency>
 		
+		<!-- 使用mysql连接jar -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -64,15 +68,23 @@
 		  <version>2.5</version>
 		</dependency>
 
+		<!-- 配置处理器 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- 集成solr依赖 -->
 		<dependency>
 		    <groupId>org.springframework.data</groupId>
 		    <artifactId>spring-data-solr</artifactId>
+		</dependency>
+		
+		<!-- 操作redis -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
 		</dependency>
   	</dependencies>
 	
